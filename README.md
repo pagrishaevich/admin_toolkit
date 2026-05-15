@@ -129,6 +129,24 @@ bash scripts/validate.sh
 
 Также в GitHub Actions настроена автоматическая проверка shell-скриптов на `push` и `pull request`.
 
+## Миграция перед переустановкой РедОС
+
+Для переноса важных данных перед установкой РедОС 8 используются отдельные скрипты:
+
+- `scripts/preinstall_backup.sh` — собрать backup на старой системе;
+- `scripts/postinstall_restore.sh` — восстановить backup на новой системе.
+
+Backup собирает сетевые подключения, профиль Яндекс Браузера без кэша, принтеры, сканеры, сертификаты, КриптоПро/Rutoken/Jacarta, ViPNet и отдельные настройки Ассистента для удаленного подключения.
+
+Пример:
+
+```bash
+sudo bash scripts/preinstall_backup.sh --output /mnt/backup --user localuser
+sudo bash scripts/postinstall_restore.sh --backup /mnt/backup/redos-migration-host-date --target-user domain.user --target-gid 1965600513
+```
+
+При восстановлении пользовательские данные переносятся в профиль целевого доменного пользователя. Скрипт меняет владельца только у восстановленных каталогов и не выполняет общий `chmod -R 755 /home/<user>`.
+
 ## Автоустановка Kaspersky
 
 Toolkit умеет автоматически установить Kaspersky Endpoint Security из уже смонтированной папки, если включить параметры в `scripts/common.sh`.
