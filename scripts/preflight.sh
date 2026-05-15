@@ -15,7 +15,7 @@ fi
 
 log "[PREFLIGHT] detected ${OS_ID:-unknown} ${OS_VERSION_ID:-unknown}"
 
-validate_domain_hostname "$(hostname)" || exit 1
+validate_domain_hostname "$(domain_hostname)" || exit 1
 
 for cmd in hostname awk grep tee; do
   require_command "$cmd"
@@ -27,18 +27,10 @@ fi
 
 for step in "${SELECTED_STEPS[@]}"; do
   case "$step" in
-    self-update)
-      if [ "${SELF_UPDATE_ENABLED:-0}" = "1" ]; then
-        require_command git
-      fi
-      ;;
-    proxy|packages|repos|autoupdate)
+    packages|repos)
       require_command dnf
       ;;
-    network)
-      require_command nmcli
-      ;;
-    time|autoupdate|security|postcheck)
+    time|security|postcheck)
       require_command systemctl
       ;;
     domain)

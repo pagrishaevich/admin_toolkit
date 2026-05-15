@@ -15,6 +15,25 @@ find_single_file_anydepth() {
   find "$search_dir" -type f -name "$pattern" | sort | tail -n 1
 }
 
+find_single_file() {
+  local search_dir="$1"
+  local pattern="$2"
+
+  find "$search_dir" -maxdepth 1 -type f -name "$pattern" | sort | tail -n 1
+}
+
+install_vipnet_rpm() {
+  local rpm_file="$1"
+  local install_rc=0
+
+  set +o pipefail
+  yes YES | dnf install -y "$rpm_file"
+  install_rc="${PIPESTATUS[1]}"
+  set -o pipefail
+
+  return "$install_rc"
+}
+
 install_vipnet() {
   local archive_path=""
   local extract_dir=""
@@ -95,7 +114,7 @@ install_vipnet() {
   if [ "$DRY_RUN" = "1" ]; then
     log "[DRY-RUN] install ViPNet RPM with accepted EULA: $vipnet_rpm"
   else
-    printf 'YES\nYES\n' | dnf install -y "$vipnet_rpm"
+    install_vipnet_rpm "$vipnet_rpm"
   fi
 
   if [ -n "$extract_dir" ] && [ -d "$extract_dir" ]; then

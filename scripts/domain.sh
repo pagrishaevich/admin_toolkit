@@ -70,7 +70,7 @@ if ! getent hosts "$DOMAIN"; then
   exit 1
 fi
 
-HOSTNAME="$(hostname)"
+HOSTNAME="$(domain_hostname)"
 validate_domain_hostname "$HOSTNAME" || exit 1
 ensure_domain_hosts_entry "$HOSTNAME"
 ensure_samba_include_files

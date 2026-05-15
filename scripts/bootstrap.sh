@@ -5,15 +5,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=/dev/null
 source "$DIR/common.sh"
 
-STEPS=(preflight self-update proxy repos packages network time autoupdate domain cifs report software security postcheck)
-if [ "${SELF_UPDATE_ENABLED:-0}" != "1" ]; then
-  FILTERED_STEPS=()
-  for step in "${STEPS[@]}"; do
-    [ "$step" = "self-update" ] && continue
-    FILTERED_STEPS+=("$step")
-  done
-  STEPS=("${FILTERED_STEPS[@]}")
-fi
+STEPS=(preflight repos packages time domain cifs report software security postcheck)
 
 usage() {
   cat <<'EOF'

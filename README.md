@@ -1,6 +1,6 @@
 # admin_toolkit_v3
 
-Набор скриптов для первичной настройки Linux-хостов: proxy, пакетная инициализация, сеть, синхронизация времени, ввод в домен, CIFS-монтирования, отчётность и итоговая проверка состояния.
+Набор скриптов для первичной настройки Linux-хостов: пакетная инициализация, сеть, синхронизация времени, ввод в домен, CIFS-монтирования, отчётность, установка базового ПО и итоговая проверка состояния.
 
 ![CI](https://github.com/pagrishaevich/admin_toolkit_v3/actions/workflows/shell-ci.yml/badge.svg)
 
@@ -29,19 +29,16 @@ custom/
 
 `scripts/bootstrap.sh` запускает шаги в таком порядке:
 
-1. `self-update` (опционально, если `SELF_UPDATE_ENABLED="1"`)
-2. `proxy`
-3. `repos`
-4. `packages`
-5. `network`
-6. `time`
-7. `autoupdate`
-8. `domain`
-9. `cifs`
-10. `report`
-11. `software`
-12. `security`
-13. `postcheck`
+1. `preflight`
+2. `repos`
+3. `packages`
+4. `time`
+5. `domain`
+6. `cifs`
+7. `report`
+8. `software`
+9. `security`
+10. `postcheck`
 
 ## Быстрый старт
 
@@ -55,10 +52,10 @@ cp custom/software.local.sh.example custom/software.local.sh
 cp custom/security.local.sh.example custom/security.local.sh
 ```
 
-3. Выдайте права на запуск shell-скриптам в корне проекта:
+3. Выдайте права на запуск shell-скриптам:
 
 ```bash
-chmod +x admin_toolkit_v3/*.sh
+chmod +x scripts/*.sh
 ```
 
 4. Подготовьте файлы секретов для безынтерактивного ввода в домен и монтирования CIFS:
@@ -69,7 +66,7 @@ printf '%s\n' 'DOMAIN_PASSWORD' > /root/.bootstrap/domain.pass
 chmod 600 /root/.bootstrap/domain.pass
 ```
 
-Для гостевого CIFS-доступа по умолчанию используются `CIFS_USERNAME="guest"` и пустой `CIFS_PASSWORD`. Если на площадке требуется пароль, дополнительно создайте `/root/.bootstrap/cifs.pass` и задайте `CIFS_PASSWORD_FILE`.
+Для гостевого CIFS-доступа по умолчанию используются `CIFS_USERNAME="guest"` и разные права для шар: `/mnt/inv` монтируется с записью через `rw,noperm,file_mode=0777,dir_mode=0777`, а `/mnt/distr` остаётся только для чтения через `ro`. Если на площадке требуется пароль, дополнительно создайте `/root/.bootstrap/cifs.pass` и задайте `CIFS_PASSWORD_FILE`.
 
 5. Запустите bootstrap от `root`:
 
@@ -82,7 +79,7 @@ bash scripts/bootstrap.sh
 ```bash
 bash scripts/bootstrap.sh --dry-run
 bash scripts/bootstrap.sh --step report
-bash scripts/bootstrap.sh --from-step network
+bash scripts/bootstrap.sh --from-step time
 bash scripts/bootstrap.sh --list-steps
 ```
 
@@ -93,11 +90,8 @@ bash scripts/bootstrap.sh --list-steps
 Чаще всего используются:
 
 - `DOMAIN`, `DOMAIN_USER`, `DOMAIN_PASSWORD_FILE`
-- `DNS_SERVERS`, `NTP_SERVER`
-- `PROXY`
-- `REPORTS_DIR`, `CIFS_SERVER`, `CIFS_INV_REMOTE`, `CIFS_DISTR_REMOTE`, `CIFS_USERNAME`, `CIFS_PASSWORD_FILE`
-- `REPO_DIR`, `AUTO_UPDATE_REMOTE`, `AUTO_UPDATE_BRANCH`
-- `SELF_UPDATE_ENABLED`
+- `NTP_SERVER`, `NTP_EXTRA_SERVERS`
+- `REPORTS_DIR`, `CIFS_SERVER`, `CIFS_INV_REMOTE`, `CIFS_DISTR_REMOTE`, `CIFS_USERNAME`, `CIFS_PASSWORD_FILE`, `CIFS_INV_MOUNT_OPTIONS`, `CIFS_DISTR_MOUNT_OPTIONS`
 - `TOOLKIT_LOG_FILE`, `REPORT_ARCHIVE_DIR`
 - `SUPPORTED_DISTROS`
 - `FIREWALL_ENABLED`, `FIREWALL_SERVICES`, `FIREWALL_PORTS`
@@ -117,6 +111,11 @@ bash scripts/bootstrap.sh --list-steps
 - `custom/security.local.sh`
 
 Эти файлы подключаются только если существуют, поэтому core-часть проекта можно переиспользовать в разных окружениях.
+
+Шаг `repos` дополнительно гарантирует, что в стандартных RED OS repo-файлах есть внутренние зеркала:
+
+- `/etc/yum.repos.d/RedOS-Base.repo`: `http://redrepos.yanao.int/redos/8.0c/$basearch/os`
+- `/etc/yum.repos.d/RedOS-Updates.repo`: `http://redrepos.yanao.int/redos/8.0c/$basearch/updates`
 
 ## Проверка
 
@@ -139,6 +138,7 @@ Toolkit умеет автоматически установить Kaspersky End
 ```bash
 KASPERSKY_ENABLED="1"
 KASPERSKY_SHARE_DIR="/mnt/distr/linux/bootstrap/kesl"
+KASPERSKY_INSTALL_GUI="1"
 KASPERSKY_INSTALL_NETWORK_AGENT="1"
 KASPERSKY_AGENT_SERVER="ksc.example.local"
 # optional: set KASPERSKY_LICENSE only when activation should be performed locally
@@ -149,7 +149,7 @@ KASPERSKY_AGENT_SERVER="ksc.example.local"
 
 - `kesl-*.rpm`
 - `klnagent64-*.rpm` при включённом `KASPERSKY_INSTALL_NETWORK_AGENT="1"`
-- `kesl-gui-*.rpm` при включённом `KASPERSKY_INSTALL_GUI="1"`
+- `kesl-gui-*.rpm` при включённом `KASPERSKY_INSTALL_GUI="1"`; по умолчанию GUI включён
 
 Шаг установки выполняется в `software` и использует штатные silent-механизмы Kaspersky:
 
@@ -189,6 +189,7 @@ CRYPTO_PRO_LICENSE_KEY=""
 ## Тихая установка ViPNet Client
 
 Toolkit умеет установить ViPNet Client из локальной папки без последующей загрузки ключей.
+Лицензионный вопрос установщика автоматически подтверждается ответом `YES`.
 
 Минимальный пример:
 
@@ -256,10 +257,9 @@ R7_GRAFIKA_ENABLED="0"
 - bootstrap стал безопаснее с точки зрения lock-механизма
 - для скриптов унифицирован `set -euo pipefail`
 - добавлены `dry-run`, запуск отдельных шагов и `preflight`
-- шаги proxy, domain и CIFS сделаны более идемпотентными
+- шаги domain и CIFS сделаны более идемпотентными
 - расширен инвентаризационный отчёт в CSV и JSON
 - добавлен базовый hardening для SSH и firewalld
-- `self-update` стал безопаснее
 - добавлены локальные hooks для кастомизации
 - добавлены локальная валидация и CI-проверка
 

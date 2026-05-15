@@ -84,8 +84,8 @@ install_kaspersky() {
   local kesl_autoinstall=""
   local agent_answers=""
   local kesl_setup_rc=0
-  local kesl_setup_timeout="${KASPERSKY_SETUP_TIMEOUT:-5}"
-  local kesl_setup_kill_after="${KASPERSKY_SETUP_KILL_AFTER:-5}"
+  local kesl_setup_timeout="${KASPERSKY_SETUP_TIMEOUT:-300}"
+  local kesl_setup_kill_after="${KASPERSKY_SETUP_KILL_AFTER:-10}"
 
   if [ "$KASPERSKY_ENABLED" != "1" ]; then
     log "[KASPERSKY] skipped"

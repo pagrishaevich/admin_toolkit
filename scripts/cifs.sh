@@ -26,6 +26,7 @@ ensure_fstab_entry() {
   local remote_path="$1"
   local mount_point="$2"
   local options="$3"
+  local tmp_file=""
 
   if [ "$DRY_RUN" = "1" ]; then
     log "[DRY-RUN] ensure fstab entry for $mount_point -> $remote_path"
@@ -34,16 +35,21 @@ ensure_fstab_entry() {
 
   touch /etc/fstab
 
-  if grep -Eq "^[^#].*[[:space:]]${mount_point//\//\\/}[[:space:]]" /etc/fstab; then
-    sed -i "\|^[^#].*[[:space:]]${mount_point}[[:space:]]|c\\${remote_path} ${mount_point} cifs ${options} 0 0" /etc/fstab
-  else
-    printf '%s %s cifs %s 0 0\n' "$remote_path" "$mount_point" "$options" >> /etc/fstab
-  fi
+  tmp_file="$(mktemp /tmp/fstab.XXXXXX)"
+  awk -v mount_point="$mount_point" '
+    $0 ~ /^[[:space:]]*#/ { print; next }
+    $2 == mount_point { next }
+    { print }
+  ' /etc/fstab > "$tmp_file"
+  printf '%s %s cifs %s 0 0\n' "$remote_path" "$mount_point" "$options" >> "$tmp_file"
+  cat "$tmp_file" > /etc/fstab
+  rm -f "$tmp_file"
 }
 
 configure_cifs_mounts() {
   local cifs_password=""
-  local common_options=""
+  local inv_options=""
+  local distr_options=""
   local guest_mode=0
 
   if [ -z "$CIFS_INV_REMOTE" ] || [ -z "$CIFS_DISTR_REMOTE" ] || [ -z "$CIFS_USERNAME" ]; then
@@ -61,7 +67,13 @@ configure_cifs_mounts() {
     return 0
   fi
 
-  common_options="credentials=${CIFS_CREDENTIALS_FILE},${CIFS_MOUNT_OPTIONS}"
+  if [ "$guest_mode" -eq 1 ]; then
+    inv_options="guest,${CIFS_INV_MOUNT_OPTIONS}"
+    distr_options="guest,${CIFS_DISTR_MOUNT_OPTIONS}"
+  else
+    inv_options="credentials=${CIFS_CREDENTIALS_FILE},${CIFS_INV_MOUNT_OPTIONS}"
+    distr_options="credentials=${CIFS_CREDENTIALS_FILE},${CIFS_DISTR_MOUNT_OPTIONS}"
+  fi
 
   if [ "$DRY_RUN" = "1" ]; then
     log "[DRY-RUN] write CIFS credentials file $CIFS_CREDENTIALS_FILE"
@@ -77,16 +89,20 @@ EOF
     chmod 600 "$CIFS_CREDENTIALS_FILE"
   fi
 
-  ensure_fstab_entry "$CIFS_INV_REMOTE" /mnt/inv "$common_options"
-  ensure_fstab_entry "$CIFS_DISTR_REMOTE" /mnt/distr "$common_options"
+  ensure_fstab_entry "$CIFS_INV_REMOTE" /mnt/inv "$inv_options"
+  ensure_fstab_entry "$CIFS_DISTR_REMOTE" /mnt/distr "$distr_options"
 }
 
 configure_cifs_mounts
 
-if mount | grep -Eq '[[:space:]]/mnt/inv[[:space:]]' && mount | grep -Eq '[[:space:]]/mnt/distr[[:space:]]'; then
-  log "[CIFS] already mounted"
-else
-  run_cmd mount -a
+if mount | grep -Eq '[[:space:]]/mnt/inv[[:space:]]'; then
+  run_cmd umount /mnt/inv
 fi
+
+if mount | grep -Eq '[[:space:]]/mnt/distr[[:space:]]'; then
+  run_cmd umount /mnt/distr
+fi
+
+run_cmd mount -a
 
 log "[CIFS] done"

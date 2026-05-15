@@ -26,6 +26,10 @@ check_kaspersky() {
   check_ok "KASPERSKY RPM" "rpm -q kesl"
   check_ok "KASPERSKY SERVICE" "systemctl is-active kesl"
 
+  if [ "$KASPERSKY_INSTALL_GUI" = "1" ]; then
+    check_ok "KASPERSKY GUI RPM" "rpm -q kesl-gui"
+  fi
+
   if [ "$KASPERSKY_INSTALL_NETWORK_AGENT" = "1" ]; then
     check_ok "KASPERSKY AGENT RPM" "rpm -q klnagent64"
     check_ok "KASPERSKY AGENT SERVICE" "systemctl is-active klnagent64"
@@ -112,8 +116,8 @@ check_r7office() {
 
 realm list | grep -q "$DOMAIN" && log "DOMAIN OK" || { log "DOMAIN FAIL"; FAIL=1; }
 mount | grep -Fq "$CIFS_SERVER" && log "CIFS OK" || { log "CIFS FAIL"; FAIL=1; }
+check_ok "CIFS INV WRITE" "test_file=\"/mnt/inv/.bootstrap_write_test_\$\$\"; touch \"\$test_file\" && rm -f \"\$test_file\""
 systemctl is-active chronyd >/dev/null && log "TIME OK" || { log "TIME FAIL"; FAIL=1; }
-systemctl is-enabled dnf-automatic.timer >/dev/null && log "AUTOUPDATE OK" || { log "AUTOUPDATE FAIL"; FAIL=1; }
 check_kaspersky
 check_cryptopro
 check_vipnet

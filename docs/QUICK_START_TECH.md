@@ -7,7 +7,7 @@
 ```bash
 git clone https://github.com/pagrishaevich/admin_toolkit_v3.git
 cd admin_toolkit_v3
-chmod +x admin_toolkit_v3/*.sh
+chmod +x scripts/*.sh
 install -d -m 700 /root/.bootstrap
 printf '%s\n' 'DOMAIN_PASSWORD' > /root/.bootstrap/domain.pass
 chmod 600 /root/.bootstrap/domain.pass

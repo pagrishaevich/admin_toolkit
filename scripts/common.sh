@@ -5,11 +5,12 @@ PROJECT_ROOT="$(cd "$COMMON_DIR/.." && pwd)"
 DRY_RUN="${DRY_RUN:-0}"
 
 : "${DOMAIN:=yg.loc}"
-: "${DOMAIN_USER:=AGPetrosyan}"
+: "${DOMAIN_USER:=}"
 : "${DOMAIN_PASSWORD:=}"
 : "${DOMAIN_PASSWORD_FILE:=}"
 : "${DNS_SERVERS:=10.14.100.222 10.17.101.222}"
 : "${NTP_SERVER:=time.yanao.ru}"
+: "${NTP_EXTRA_SERVERS:=10.82.200.1}"
 : "${PROXY:=10.82.200.1:8090}"
 : "${ROLE:=workstation}"
 : "${ADMIN_USB_SERIAL:=CHANGE_ME}"
@@ -23,6 +24,8 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${CIFS_DOMAIN:=}"
 : "${CIFS_CREDENTIALS_FILE:=/root/.bootstrap/cifs.creds}"
 : "${CIFS_MOUNT_OPTIONS:=iocharset=utf8,vers=3,_netdev,nofail,x-systemd.automount}"
+: "${CIFS_INV_MOUNT_OPTIONS:=${CIFS_MOUNT_OPTIONS},rw,noperm,file_mode=0777,dir_mode=0777}"
+: "${CIFS_DISTR_MOUNT_OPTIONS:=${CIFS_MOUNT_OPTIONS},ro}"
 : "${REPO_DIR:=/opt/admin_toolkit}"
 : "${SELF_UPDATE_ENABLED:=0}"
 : "${AUTO_UPDATE_REMOTE:=origin}"
@@ -45,7 +48,7 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${SSH_CONFIG_FILE:=/etc/ssh/sshd_config}"
 : "${KASPERSKY_ENABLED:=1}"
 : "${KASPERSKY_SHARE_DIR:=/mnt/distr/linux/bootstrap/kesl}"
-: "${KASPERSKY_INSTALL_GUI:=0}"
+: "${KASPERSKY_INSTALL_GUI:=1}"
 : "${KASPERSKY_INSTALL_NETWORK_AGENT:=1}"
 : "${KASPERSKY_ADMIN_USER:=}"
 : "${KASPERSKY_LOCALE:=ru_RU.UTF-8}"
@@ -55,6 +58,8 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${KASPERSKY_PROXY_SERVER:=}"
 : "${KASPERSKY_UPDATE_EXECUTE:=yes}"
 : "${KASPERSKY_LICENSE:=}"
+: "${KASPERSKY_SETUP_TIMEOUT:=300}"
+: "${KASPERSKY_SETUP_KILL_AFTER:=10}"
 : "${KASPERSKY_AGENT_SERVER:=10.8.31.60}"
 : "${KASPERSKY_AGENT_PORT:=14000}"
 : "${KASPERSKY_AGENT_SSL_PORT:=13000}"
@@ -140,6 +145,10 @@ validate_domain_hostname() {
   fi
 
   return 0
+}
+
+domain_hostname() {
+  hostname -s 2>/dev/null || hostname
 }
 
 run_cmd() {
