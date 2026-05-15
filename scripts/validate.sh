@@ -28,4 +28,11 @@ if [ -d "$PROJECT_ROOT/custom" ]; then
   done
 fi
 
+if [ -d "$PROJECT_ROOT/tests" ]; then
+  echo "[validate] tests"
+  find "$PROJECT_ROOT/tests" -type f -name '*_test.sh' -print0 | while IFS= read -r -d '' file; do
+    bash "$file"
+  done
+fi
+
 echo "[validate] ok"
