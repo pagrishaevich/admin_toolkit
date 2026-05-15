@@ -21,8 +21,7 @@
 - Исправлено автопринятие лицензии ViPNet через непрерывную подачу `YES`.
 - Убран шаг `network` из bootstrap, чтобы скрипт не менял DNS и поисковый домен.
 - Шаг `repos` теперь добавляет `redrepos.yanao.int` в `RedOS-Base.repo` и `RedOS-Updates.repo`.
-- Добавлен самостоятельный подпроект `backup_restore` для миграции перед переустановкой РедОС 7.3 -> 8.
-- Добавлены shell-тесты `backup_restore/tests/migration_test.sh` и локальная проверка `backup_restore/scripts/validate.sh`.
+- Миграция перед переустановкой РедОС 7.3 -> 8 вынесена в отдельный локальный repo `D:\Codex\backup_restore`.
 
 ## Известные проблемы
 

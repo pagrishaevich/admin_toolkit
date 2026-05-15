@@ -35,9 +35,4 @@ if [ -d "$PROJECT_ROOT/tests" ]; then
   done
 fi
 
-if [ -x "$PROJECT_ROOT/backup_restore/scripts/validate.sh" ] || [ -f "$PROJECT_ROOT/backup_restore/scripts/validate.sh" ]; then
-  echo "[validate] backup_restore"
-  bash "$PROJECT_ROOT/backup_restore/scripts/validate.sh"
-fi
-
 echo "[validate] ok"
