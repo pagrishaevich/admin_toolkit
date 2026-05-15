@@ -131,16 +131,17 @@ bash scripts/validate.sh
 
 ## Миграция перед переустановкой РедОС
 
-Для переноса важных данных перед установкой РедОС 8 используются отдельные скрипты:
+Для переноса важных данных перед установкой РедОС 8 используется отдельный подпроект `backup_restore`:
 
-- `scripts/preinstall_backup.sh` — собрать backup на старой системе;
-- `scripts/postinstall_restore.sh` — восстановить backup на новой системе.
+- `backup_restore/scripts/preinstall_backup.sh` — собрать backup на старой системе;
+- `backup_restore/scripts/postinstall_restore.sh` — восстановить backup на новой системе.
 
 Backup собирает сетевые подключения, профиль Яндекс Браузера без кэша, принтеры, сканеры, сертификаты, КриптоПро/Rutoken/Jacarta, ViPNet и отдельные настройки Ассистента для удаленного подключения.
 
 Пример:
 
 ```bash
+cd backup_restore
 sudo bash scripts/preinstall_backup.sh --output /mnt/backup --user localuser
 sudo bash scripts/postinstall_restore.sh --backup /mnt/backup/redos-migration-host-date --target-user domain.user --target-gid 1965600513
 ```

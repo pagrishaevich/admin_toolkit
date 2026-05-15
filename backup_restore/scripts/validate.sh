@@ -21,23 +21,11 @@ else
   echo "[validate] shfmt not installed, skipping"
 fi
 
-if [ -d "$PROJECT_ROOT/custom" ]; then
-  echo "[validate] custom hooks"
-  find "$PROJECT_ROOT/custom" -type f -name '*.sh' -print0 | while IFS= read -r -d '' file; do
-    bash -n "$file"
-  done
-fi
-
 if [ -d "$PROJECT_ROOT/tests" ]; then
   echo "[validate] tests"
   find "$PROJECT_ROOT/tests" -type f -name '*_test.sh' -print0 | while IFS= read -r -d '' file; do
     bash "$file"
   done
-fi
-
-if [ -x "$PROJECT_ROOT/backup_restore/scripts/validate.sh" ] || [ -f "$PROJECT_ROOT/backup_restore/scripts/validate.sh" ]; then
-  echo "[validate] backup_restore"
-  bash "$PROJECT_ROOT/backup_restore/scripts/validate.sh"
 fi
 
 echo "[validate] ok"

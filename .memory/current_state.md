@@ -26,8 +26,7 @@
 - `scripts/time.sh` — настройка chrony/NTP.
 - `scripts/software.sh` — установка Kaspersky, CryptoPro, ViPNet, Яндекс Браузера и Р7-Офис.
 - `scripts/postcheck.sh` — итоговая проверка состояния.
-- `scripts/preinstall_backup.sh` — сбор backup перед переустановкой РедОС.
-- `scripts/postinstall_restore.sh` — восстановление backup после установки РедОС 8.
+- `backup_restore/` — самостоятельный подпроект для backup/restore перед переустановкой РедОС.
 
 Документация для ручной настройки без bootstrap: `install.md`.
 Дизайн и план миграционных скриптов: `docs/superpowers/specs/2026-05-15-redos-reinstall-migration-design.md` и `docs/superpowers/plans/2026-05-15-redos-reinstall-migration-implementation.md`.
@@ -45,4 +44,4 @@
 - ViPNet устанавливается с автоматической подачей `YES` на лицензионный вопрос.
 - DNS и поисковый домен не настраиваются bootstrap-скриптом; эти параметры задаются на этапе установки ОС.
 - Шаг `repos` гарантирует внутренние RED OS baseurl для `RedOS-Base.repo` и `RedOS-Updates.repo`.
-- Добавлены скрипты миграции перед переустановкой: backup собирает сетевые папки, Яндекс Браузер без кэша, CUPS/SANE, сертификаты, КриптоПро/Rutoken/Jacarta, ViPNet и отдельный Ассистент; restore переносит данные локального пользователя в профиль доменного пользователя с gid по умолчанию `1965600513`.
+- Добавлен самостоятельный подпроект `backup_restore`: backup собирает сетевые папки, Яндекс Браузер без кэша, CUPS/SANE, сертификаты, КриптоПро/Rutoken/Jacarta, ViPNet и отдельный Ассистент; restore переносит данные локального пользователя в профиль доменного пользователя с gid по умолчанию `1965600513`.

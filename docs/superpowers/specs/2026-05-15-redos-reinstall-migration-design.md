@@ -8,7 +8,7 @@
 
 ## Скрипты
 
-### `scripts/preinstall_backup.sh`
+### `backup_restore/scripts/preinstall_backup.sh`
 
 Запускается от `root` на старой РедОС 7.3.
 
@@ -25,7 +25,7 @@ redos-migration-<hostname>-<date>/
 
 Сохраняет данные с помощью `rsync -a`, где это возможно, чтобы не терять права и структуру файлов.
 
-### `scripts/postinstall_restore.sh`
+### `backup_restore/scripts/postinstall_restore.sh`
 
 Запускается от `root` на новой РедОС 8.
 
@@ -199,7 +199,7 @@ Restore не устанавливает КриптоПро, Rutoken или Jacar
 
 Минимальная проверка реализации:
 
-- `bash -n scripts/preinstall_backup.sh scripts/postinstall_restore.sh`;
+- `cd backup_restore && bash scripts/validate.sh`;
 - `bash scripts/validate.sh`;
 - dry-run или тестовый запуск backup в временную папку на Linux-хосте;
 - проверка, что кэш Яндекс Браузера не попадает в backup;

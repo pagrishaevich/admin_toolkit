@@ -1,4 +1,4 @@
-# RED OS Reinstall Migration Implementation Plan
+﻿# RED OS Reinstall Migration Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -12,9 +12,9 @@
 
 ## Файлы
 
-- Create: `tests/migration_test.sh` — быстрые shell-тесты поведения без реальной РедОС: проверяют exclude-файл браузера, генерацию hints и restore владельцев через dry-run/stub.
-- Create: `scripts/preinstall_backup.sh` — сбор backup на старой системе.
-- Create: `scripts/postinstall_restore.sh` — восстановление backup на новой системе.
+- Create: `backup_restore/tests/migration_test.sh` — быстрые shell-тесты поведения без реальной РедОС: проверяют exclude-файл браузера, генерацию hints и restore владельцев через dry-run/stub.
+- Create: `backup_restore/scripts/preinstall_backup.sh` — сбор backup на старой системе.
+- Create: `backup_restore/scripts/postinstall_restore.sh` — восстановление backup на новой системе.
 - Modify: `scripts/validate.sh` — запуск shell-тестов, если они есть.
 - Modify: `README.md` — краткая ссылка на новые скрипты.
 - Modify: `.memory/current_state.md`, `.memory/tasks.md`, `.memory/session_logs/2026-05-15.md` — итоговое состояние после реализации.
@@ -22,12 +22,12 @@
 ## Task 1: Тестовый каркас миграции
 
 **Files:**
-- Create: `tests/migration_test.sh`
+- Create: `backup_restore/tests/migration_test.sh`
 - Modify: `scripts/validate.sh`
 
 - [ ] **Step 1: Write the failing test**
 
-Создать `tests/migration_test.sh`:
+Создать `backup_restore/tests/migration_test.sh`:
 
 ```bash
 #!/bin/bash
@@ -37,7 +37,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 test_browser_excludes_exist() {
   local output
-  output="$(BACKUP_TEST_PRINT_BROWSER_EXCLUDES=1 bash "$ROOT_DIR/scripts/preinstall_backup.sh" 2>/dev/null)"
+  output="$(BACKUP_TEST_PRINT_BROWSER_EXCLUDES=1 bash "$ROOT_DIR/backup_restore/scripts/preinstall_backup.sh" 2>/dev/null)"
   grep -Fxq "Cache" <<<"$output"
   grep -Fxq "Code Cache" <<<"$output"
   grep -Fxq "GPUCache" <<<"$output"
@@ -46,7 +46,7 @@ test_browser_excludes_exist() {
 
 test_restore_hints_template_mentions_required_checks() {
   local output
-  output="$(RESTORE_TEST_PRINT_HINTS=1 bash "$ROOT_DIR/scripts/postinstall_restore.sh" 2>/dev/null)"
+  output="$(RESTORE_TEST_PRINT_HINTS=1 bash "$ROOT_DIR/backup_restore/scripts/postinstall_restore.sh" 2>/dev/null)"
   grep -Fq "Яндекс Браузер" <<<"$output"
   grep -Fq "КриптоПро" <<<"$output"
   grep -Fq "ViPNet" <<<"$output"
@@ -56,7 +56,7 @@ test_restore_hints_template_mentions_required_checks() {
 test_usage_mentions_domain_gid_default() {
   local output
   set +e
-  output="$(bash "$ROOT_DIR/scripts/postinstall_restore.sh" --help 2>&1)"
+  output="$(bash "$ROOT_DIR/backup_restore/scripts/postinstall_restore.sh" --help 2>&1)"
   local rc=$?
   set -e
   [ "$rc" -eq 0 ]
@@ -85,24 +85,24 @@ fi
 
 Run: `bash scripts/validate.sh`
 
-Expected: FAIL, потому что `scripts/preinstall_backup.sh` и `scripts/postinstall_restore.sh` еще не существуют.
+Expected: FAIL, потому что `backup_restore/scripts/preinstall_backup.sh` и `backup_restore/scripts/postinstall_restore.sh` еще не существуют.
 
 - [ ] **Step 3: Commit failing test**
 
 ```bash
-git add tests/migration_test.sh scripts/validate.sh
+git add backup_restore/tests/migration_test.sh scripts/validate.sh
 git commit -m "test: add migration script behavior checks"
 ```
 
 ## Task 2: Backup script
 
 **Files:**
-- Create: `scripts/preinstall_backup.sh`
-- Test: `tests/migration_test.sh`
+- Create: `backup_restore/scripts/preinstall_backup.sh`
+- Test: `backup_restore/tests/migration_test.sh`
 
 - [ ] **Step 1: Implement minimal backup helpers for tests**
 
-Создать `scripts/preinstall_backup.sh` с:
+Создать `backup_restore/scripts/preinstall_backup.sh` с:
 
 - `set -euo pipefail`;
 - source `common.sh`;
@@ -161,7 +161,7 @@ Add functions:
 Expected CLI:
 
 ```bash
-bash scripts/preinstall_backup.sh --output /path/to/backup-parent --user localuser
+bash backup_restore/scripts/preinstall_backup.sh --output /path/to/backup-parent --user localuser
 ```
 
 Expected output tree:
@@ -189,12 +189,12 @@ Expected: FAIL only if restore script is still missing; backup syntax should pas
 ## Task 3: Restore script
 
 **Files:**
-- Create: `scripts/postinstall_restore.sh`
-- Test: `tests/migration_test.sh`
+- Create: `backup_restore/scripts/postinstall_restore.sh`
+- Test: `backup_restore/tests/migration_test.sh`
 
 - [ ] **Step 1: Implement minimal restore helpers for tests**
 
-Создать `scripts/postinstall_restore.sh` с:
+Создать `backup_restore/scripts/postinstall_restore.sh` с:
 
 - `set -euo pipefail`;
 - source `common.sh`;
@@ -207,7 +207,7 @@ Expected: FAIL only if restore script is still missing; backup syntax should pas
 
 Run: `bash scripts/validate.sh`
 
-Expected: PASS for current `tests/migration_test.sh`.
+Expected: PASS for current `backup_restore/tests/migration_test.sh`.
 
 - [ ] **Step 3: Implement full restore behavior**
 
@@ -230,7 +230,7 @@ Add functions:
 Expected CLI:
 
 ```bash
-bash scripts/postinstall_restore.sh --backup /path/to/redos-migration-host-date --target-user 'DOMAIN\\user' --target-gid 1965600513
+bash backup_restore/scripts/postinstall_restore.sh --backup /path/to/redos-migration-host-date --target-user 'DOMAIN\\user' --target-gid 1965600513
 ```
 
 Restore must:
@@ -264,14 +264,14 @@ Add a short section:
 
 Для переноса настроек перед установкой РедОС 8 используются:
 
-- `scripts/preinstall_backup.sh` — собрать backup на старой системе;
-- `scripts/postinstall_restore.sh` — восстановить backup на новой системе.
+- `backup_restore/scripts/preinstall_backup.sh` — собрать backup на старой системе;
+- `backup_restore/scripts/postinstall_restore.sh` — восстановить backup на новой системе.
 
 Пример:
 
 ```bash
-sudo bash scripts/preinstall_backup.sh --output /mnt/backup --user localuser
-sudo bash scripts/postinstall_restore.sh --backup /mnt/backup/redos-migration-host-date --target-user domain.user --target-gid 1965600513
+sudo bash backup_restore/scripts/preinstall_backup.sh --output /mnt/backup --user localuser
+sudo bash backup_restore/scripts/postinstall_restore.sh --backup /mnt/backup/redos-migration-host-date --target-user domain.user --target-gid 1965600513
 ```
 ```
 
@@ -304,8 +304,8 @@ Expected: `[validate] ok`.
 Run:
 
 ```bash
-bash scripts/preinstall_backup.sh --help
-bash scripts/postinstall_restore.sh --help
+bash backup_restore/scripts/preinstall_backup.sh --help
+bash backup_restore/scripts/postinstall_restore.sh --help
 ```
 
 Expected: both commands exit `0` and show Russian usage text.
@@ -316,7 +316,7 @@ Run:
 
 ```bash
 git diff --stat
-git diff -- scripts/preinstall_backup.sh scripts/postinstall_restore.sh tests/migration_test.sh scripts/validate.sh README.md
+git diff -- backup_restore/scripts/preinstall_backup.sh backup_restore/scripts/postinstall_restore.sh backup_restore/tests/migration_test.sh scripts/validate.sh README.md
 ```
 
 Expected: changes are scoped to migration scripts, tests, validation and docs.
@@ -324,7 +324,7 @@ Expected: changes are scoped to migration scripts, tests, validation and docs.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add scripts/preinstall_backup.sh scripts/postinstall_restore.sh tests/migration_test.sh scripts/validate.sh README.md .memory/current_state.md .memory/tasks.md .memory/session_logs/2026-05-15.md
+git add backup_restore/scripts/preinstall_backup.sh backup_restore/scripts/postinstall_restore.sh backup_restore/tests/migration_test.sh scripts/validate.sh README.md .memory/current_state.md .memory/tasks.md .memory/session_logs/2026-05-15.md
 git commit -m "feat: add redos reinstall migration scripts"
 ```
 
@@ -334,3 +334,4 @@ git commit -m "feat: add redos reinstall migration scripts"
 - Exclusions: RPM list, NetworkManager, domain state and SSH keys are excluded by design.
 - Placeholder scan: no TODO/TBD placeholders.
 - Type consistency: script names and CLI flags are consistent across tasks.
+
