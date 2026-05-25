@@ -3,6 +3,7 @@
 Проект `admin_toolkit` — набор Bash-скриптов для первичной настройки Linux-хостов.
 
 GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переименован из `pagrishaevich/admin_toolkit_v3` без потери истории).
+Актуальная версия опубликована в ветке `main` 2026-05-25.
 
 Основной оркестратор: `scripts/bootstrap.sh`.
 
