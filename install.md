@@ -368,6 +368,24 @@ rpm -q assistant-fstek
 grep -Fxf /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt /etc/hosts
 ```
 
+Установить KDE, дисплей-менеджер и Windows-like тему:
+
+```bash
+dnf install -y @KDE --allowerasing
+dnf install -y sddm
+systemctl disable gdm || true
+systemctl enable sddm
+dnf install -y redos-wintheme-switcher
+```
+
+Проверить рабочее окружение:
+
+```bash
+rpm -q sddm redos-wintheme-switcher
+systemctl is-enabled sddm
+systemctl is-enabled gdm && echo "ОШИБКА: gdm включён" || true
+```
+
 ## 11. Яндекс Браузер
 
 Установить пакет репозитория и браузер:
@@ -427,6 +445,8 @@ rpm -q cprocsp-stunnel-64
 rpm -qa | grep -E '^vipnetclient'
 rpm -q assistant-fstek
 grep -Fxf /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt /etc/hosts
+rpm -q sddm redos-wintheme-switcher
+systemctl is-enabled sddm
 rpm -q yandex-browser-stable
 rpm -q r7-office
 ```

@@ -200,7 +200,7 @@ VIPNET_VARIANT="gui"
 
 ## Автоустановка Ассистент
 
-Toolkit устанавливает Ассистент после Kaspersky, КриптоПро и ViPNet, затем добавляет узлы из файла дистрибутива в `/etc/hosts`.
+Toolkit устанавливает Ассистент после Kaspersky, КриптоПро и ViPNet, затем добавляет узлы из файла дистрибутива в `/etc/hosts`. После этого по умолчанию устанавливаются KDE, `sddm` и пакет оформления `redos-wintheme-switcher`.
 
 Минимальный пример:
 
@@ -209,9 +209,14 @@ ASSISTANT_ENABLED="1"
 ASSISTANT_DIST_DIR="/mnt/distr/linux/bootstrap/assistant"
 ASSISTANT_RPM_PATTERN="assistant-fstek-*.x86_64.rpm"
 ASSISTANT_HOSTS_FILE="/mnt/distr/linux/bootstrap/assistant/redos_hosts.txt"
+ASSISTANT_DESKTOP_ENABLED="1"
+ASSISTANT_KDE_GROUP="@KDE"
+ASSISTANT_DISPLAY_MANAGER_PACKAGE="sddm"
+ASSISTANT_THEME_PACKAGE="redos-wintheme-switcher"
 ```
 
 Строки из `redos_hosts.txt` дописываются в конец `/etc/hosts` только при их отсутствии, поэтому повторный запуск не создаёт дубликатов.
+При установке рабочего окружения `gdm` отключается, а `sddm` включается как дисплей-менеджер.
 
 ## Установка Яндекс Браузера из репозитория
 
@@ -263,7 +268,7 @@ R7_GRAFIKA_ENABLED="0"
 - `cifs` монтирует `/mnt/inv` с записью, а `/mnt/distr` только для чтения
 - Kaspersky GUI включён по умолчанию
 - ViPNet автоматически принимает лицензионный вопрос `YES`
-- Ассистент устанавливается автоматически, а узлы из `redos_hosts.txt` добавляются в `/etc/hosts`
+- Ассистент устанавливается автоматически, узлы из `redos_hosts.txt` добавляются в `/etc/hosts`, затем устанавливаются KDE, `sddm` и Windows-like тема
 - добавлен `install.md` для ручной настройки без bootstrap
 - конфигурация вынесена в `scripts/common.sh`
 - bootstrap стал безопаснее с точки зрения lock-механизма

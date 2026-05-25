@@ -7,6 +7,10 @@ source "$(dirname "$0")/common.sh"
 : "${ASSISTANT_DIST_DIR:=/mnt/distr/linux/bootstrap/assistant}"
 : "${ASSISTANT_RPM_PATTERN:=assistant-fstek-*.x86_64.rpm}"
 : "${ASSISTANT_HOSTS_FILE:=${ASSISTANT_DIST_DIR}/redos_hosts.txt}"
+: "${ASSISTANT_DESKTOP_ENABLED:=0}"
+: "${ASSISTANT_KDE_GROUP:=@KDE}"
+: "${ASSISTANT_DISPLAY_MANAGER_PACKAGE:=sddm}"
+: "${ASSISTANT_THEME_PACKAGE:=redos-wintheme-switcher}"
 
 find_assistant_rpm() {
   find "$ASSISTANT_DIST_DIR" -maxdepth 1 -type f -name "$ASSISTANT_RPM_PATTERN" | sort | tail -n 1
@@ -24,6 +28,28 @@ append_assistant_hosts() {
     esac
     append_if_missing "$line" /etc/hosts
   done <"$ASSISTANT_HOSTS_FILE"
+}
+
+install_assistant_desktop() {
+  if [ "$ASSISTANT_DESKTOP_ENABLED" != "1" ]; then
+    log "[ASSISTANT] desktop setup skipped"
+    return 0
+  fi
+
+  require_command systemctl
+
+  log "[ASSISTANT] installing KDE desktop group: $ASSISTANT_KDE_GROUP"
+  run_cmd dnf install -y "$ASSISTANT_KDE_GROUP" --allowerasing
+
+  log "[ASSISTANT] installing display manager: $ASSISTANT_DISPLAY_MANAGER_PACKAGE"
+  run_cmd dnf install -y "$ASSISTANT_DISPLAY_MANAGER_PACKAGE"
+
+  log "[ASSISTANT] switching display manager to sddm"
+  run_cmd systemctl disable gdm || true
+  run_cmd systemctl enable sddm
+
+  log "[ASSISTANT] installing Windows-like theme package: $ASSISTANT_THEME_PACKAGE"
+  run_cmd dnf install -y "$ASSISTANT_THEME_PACKAGE"
 }
 
 install_assistant() {
@@ -58,6 +84,8 @@ install_assistant() {
 
   log "[ASSISTANT] adding hosts entries from: $ASSISTANT_HOSTS_FILE"
   append_assistant_hosts
+
+  install_assistant_desktop
 
   log "[ASSISTANT] done"
 }

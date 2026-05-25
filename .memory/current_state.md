@@ -24,7 +24,7 @@ GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переимено
 - `scripts/preflight.sh` — ранняя проверка ОС и обязательных команд.
 - `scripts/time.sh` — настройка chrony/NTP.
 - `scripts/software.sh` — установка Kaspersky, CryptoPro, ViPNet, Ассистент, Яндекс Браузера и Р7-Офис.
-- `scripts/assistant.sh` — установка RPM Ассистент и идемпотентное добавление узлов из `redos_hosts.txt` в `/etc/hosts`.
+- `scripts/assistant.sh` — установка RPM Ассистент, добавление узлов из `redos_hosts.txt` в `/etc/hosts` и настройка KDE/SDDM/Windows-like темы.
 - `scripts/postcheck.sh` — итоговая проверка состояния.
 Документация для ручной настройки без bootstrap: `install.md`.
 Миграционные скрипты backup/restore вынесены в отдельный локальный репозиторий `D:\Codex\backup_restore`.
@@ -40,7 +40,7 @@ GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переимено
 - `kesl-gui` на тестовом сервере отсутствует; `software --dry-run` с текущей версией находит `kesl-gui-12.2.0-2412.x86_64.rpm` и планирует его установку.
 - CIFS проверен на тестовом сервере: `/mnt/inv` монтируется с записью для обычного пользователя, `/mnt/distr` остаётся read-only.
 - ViPNet устанавливается с автоматической подачей `YES` на лицензионный вопрос.
-- Ассистент подключён после ViPNet в шаге `software`; `software --dry-run` на тестовом сервере находит `assistant-fstek-5.4-0.x86_64.rpm` и планирует добавить 7 узлов из `redos_hosts.txt` в `/etc/hosts`.
+- Ассистент подключён после ViPNet в шаге `software`; после него включена установка KDE, `sddm` и `redos-wintheme-switcher` с переключением с `gdm` на `sddm`.
 - Проверка CI настроена на `shellcheck` с разрешением локальных `source` и `shfmt -i 2`; строгий прогон на тестовом сервере проходит.
 - DNS и поисковый домен не настраиваются bootstrap-скриптом; эти параметры задаются на этапе установки ОС.
 - Миграционные скрипты больше не входят в `admin_toolkit`; отдельный repo `D:\Codex\backup_restore` содержит backup сетевых папок, Яндекс Браузера без кэша, CUPS/SANE, сертификатов, КриптоПро/Rutoken/Jacarta, ViPNet и Ассистента; restore переносит данные локального пользователя в профиль доменного пользователя с gid по умолчанию `1965600513`.

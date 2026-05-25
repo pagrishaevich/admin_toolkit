@@ -129,6 +129,19 @@ check_assistant() {
     log "ASSISTANT HOSTS FAIL"
     FAIL=1
   fi
+
+  if [ "$ASSISTANT_DESKTOP_ENABLED" = "1" ]; then
+    check_ok "ASSISTANT SDDM RPM" "rpm -q \"$ASSISTANT_DISPLAY_MANAGER_PACKAGE\""
+    check_ok "ASSISTANT SDDM ENABLED" "systemctl is-enabled sddm"
+    check_ok "ASSISTANT THEME RPM" "rpm -q \"$ASSISTANT_THEME_PACKAGE\""
+
+    if systemctl is-enabled gdm >/dev/null 2>&1; then
+      log "ASSISTANT GDM DISABLED FAIL"
+      FAIL=1
+    else
+      log "ASSISTANT GDM DISABLED OK"
+    fi
+  fi
 }
 
 check_yandex_browser() {

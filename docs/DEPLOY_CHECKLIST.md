@@ -96,4 +96,5 @@ bash scripts/bootstrap.sh
 - установить ViPNet Client GUI
 - не импортировать ключи ViPNet
 - установить Ассистент и добавить узлы из `redos_hosts.txt` в `/etc/hosts`
+- установить KDE, включить `sddm` вместо `gdm` и установить `redos-wintheme-switcher`
 - выполнить итоговую проверку в `postcheck`
