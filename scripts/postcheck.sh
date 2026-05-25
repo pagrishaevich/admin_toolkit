@@ -90,6 +90,44 @@ check_vipnet() {
   check_ok "VIPNET COMMAND" "command -v vipnetclient"
 }
 
+check_assistant() {
+  local line=""
+  local hosts_ok=1
+
+  if [ "$ASSISTANT_ENABLED" != "1" ]; then
+    return 0
+  fi
+
+  check_ok "ASSISTANT RPM" "rpm -q assistant-fstek"
+
+  if [ ! -r "$ASSISTANT_HOSTS_FILE" ]; then
+    log "ASSISTANT HOSTS SOURCE FAIL"
+    FAIL=1
+    return 0
+  fi
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%$'\r'}"
+    case "$line" in
+      ""|\#*)
+        continue
+        ;;
+    esac
+
+    if ! grep -Fqx "$line" /etc/hosts; then
+      hosts_ok=0
+      break
+    fi
+  done < "$ASSISTANT_HOSTS_FILE"
+
+  if [ "$hosts_ok" -eq 1 ]; then
+    log "ASSISTANT HOSTS OK"
+  else
+    log "ASSISTANT HOSTS FAIL"
+    FAIL=1
+  fi
+}
+
 check_yandex_browser() {
   if [ "$YANDEX_BROWSER_ENABLED" != "1" ]; then
     return 0
@@ -121,6 +159,7 @@ systemctl is-active chronyd >/dev/null && log "TIME OK" || { log "TIME FAIL"; FA
 check_kaspersky
 check_cryptopro
 check_vipnet
+check_assistant
 check_yandex_browser
 check_r7office
 

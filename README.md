@@ -99,6 +99,7 @@ bash scripts/bootstrap.sh --list-steps
 - `KASPERSKY_*` для автоматической установки Kaspersky Endpoint Security из локальной папки/сетевой шары
 - `CRYPTO_PRO_*` для тихой установки КриптоПро CSP из папки с дистрибутивами
 - `VIPNET_*` для тихой установки ViPNet Client без импорта ключей
+- `ASSISTANT_*` для установки Ассистент и добавления его узлов в `/etc/hosts`
 - `YANDEX_BROWSER_*` для установки Яндекс Браузера из подключаемого репозитория
 - `R7_*` для установки Р7-Офис и опциональных пакетов из подключаемого репозитория
 
@@ -208,6 +209,21 @@ VIPNET_VARIANT="gui"
 
 Импорт ключей `*.dst` модуль намеренно не выполняет.
 
+## Автоустановка Ассистент
+
+Toolkit устанавливает Ассистент после Kaspersky, КриптоПро и ViPNet, затем добавляет узлы из файла дистрибутива в `/etc/hosts`.
+
+Минимальный пример:
+
+```bash
+ASSISTANT_ENABLED="1"
+ASSISTANT_DIST_DIR="/mnt/distr/linux/bootstrap/assistant"
+ASSISTANT_RPM_PATTERN="assistant-fstek-*.x86_64.rpm"
+ASSISTANT_HOSTS_FILE="/mnt/distr/linux/bootstrap/assistant/redos_hosts.txt"
+```
+
+Строки из `redos_hosts.txt` дописываются в конец `/etc/hosts` только при их отсутствии, поэтому повторный запуск не создаёт дубликатов.
+
 ## Установка Яндекс Браузера из репозитория
 
 Toolkit умеет автоматически подключить репозиторий Яндекс Браузера и установить сам браузер в шаге `software`.
@@ -260,6 +276,7 @@ R7_GRAFIKA_ENABLED="0"
 - `cifs` монтирует `/mnt/inv` с записью, а `/mnt/distr` только для чтения
 - Kaspersky GUI включён по умолчанию
 - ViPNet автоматически принимает лицензионный вопрос `YES`
+- Ассистент устанавливается автоматически, а узлы из `redos_hosts.txt` добавляются в `/etc/hosts`
 - добавлен `install.md` для ручной настройки без bootstrap
 - конфигурация вынесена в `scripts/common.sh`
 - bootstrap стал безопаснее с точки зрения lock-механизма

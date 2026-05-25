@@ -364,7 +364,32 @@ rpm -qa | grep -E '^vipnetclient'
 command -v vipnetclient
 ```
 
-## 11. Яндекс Браузер
+## 11. Ассистент
+
+Установить пакет:
+
+```bash
+dnf install -y /mnt/distr/linux/bootstrap/assistant/assistant-fstek-5.4-0.x86_64.rpm
+```
+
+Добавить отсутствующие узлы из файла дистрибутива в конец `/etc/hosts`:
+
+```bash
+while IFS= read -r line || [ -n "$line" ]; do
+  line="${line%$'\r'}"
+  case "$line" in ""|\#*) continue ;; esac
+  grep -Fqx "$line" /etc/hosts || printf '%s\n' "$line" >> /etc/hosts
+done < /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt
+```
+
+Проверить:
+
+```bash
+rpm -q assistant-fstek
+grep -Fxf /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt /etc/hosts
+```
+
+## 12. Яндекс Браузер
 
 Установить пакет репозитория и браузер:
 
@@ -379,7 +404,7 @@ dnf install -y yandex-browser-stable
 rpm -q yandex-browser-stable
 ```
 
-## 12. Р7-Офис
+## 13. Р7-Офис
 
 Установить пакет репозитория и офис:
 
@@ -401,7 +426,7 @@ dnf install -y R7Grafika
 rpm -q r7-office
 ```
 
-## 13. Безопасность
+## 14. Безопасность
 
 Включить firewalld:
 
@@ -420,7 +445,7 @@ grep -q '^PasswordAuthentication' /etc/ssh/sshd_config && sed -i 's/^PasswordAut
 systemctl reload sshd || systemctl reload ssh || true
 ```
 
-## 14. Итоговая проверка
+## 15. Итоговая проверка
 
 Проверить домен, CIFS и время:
 
@@ -440,6 +465,8 @@ systemctl is-active klnagent64
 rpm -q lsb-cprocsp-kc1-64
 rpm -q cprocsp-stunnel-64
 rpm -qa | grep -E '^vipnetclient'
+rpm -q assistant-fstek
+grep -Fxf /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt /etc/hosts
 rpm -q yandex-browser-stable
 rpm -q r7-office
 ```
