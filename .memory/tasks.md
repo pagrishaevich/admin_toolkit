@@ -23,6 +23,7 @@
 - Убран шаг `network` из bootstrap, чтобы скрипт не менял DNS и поисковый домен.
 - Шаг `repos` теперь добавляет `redrepos.yanao.int` в `RedOS-Base.repo` и `RedOS-Updates.repo`.
 - В шаг `software` добавлена автоустановка Ассистент с идемпотентным дополнением `/etc/hosts` из `redos_hosts.txt`.
+- GitHub-репозиторий переименован из `pagrishaevich/admin_toolkit_v3` в `pagrishaevich/admin_toolkit`.
 - Миграция перед переустановкой РедОС 7.3 -> 8 вынесена в отдельный локальный repo `D:\Codex\backup_restore`.
 
 ## Известные проблемы

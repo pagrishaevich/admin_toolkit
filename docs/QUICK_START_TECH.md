@@ -5,8 +5,8 @@
 ## Команды
 
 ```bash
-git clone https://github.com/pagrishaevich/admin_toolkit_v3.git
-cd admin_toolkit_v3
+git clone https://github.com/pagrishaevich/admin_toolkit.git
+cd admin_toolkit
 chmod +x scripts/*.sh
 install -d -m 700 /root/.bootstrap
 printf '%s\n' 'DOMAIN_PASSWORD' > /root/.bootstrap/domain.pass
@@ -21,6 +21,7 @@ bash scripts/bootstrap.sh
   - `/mnt/distr/linux/bootstrap/kesl`
   - `/mnt/distr/linux/bootstrap/cryptopro`
   - `/mnt/distr/linux/bootstrap/vipnet`
+  - `/mnt/distr/linux/bootstrap/assistant`
 
 ## Ожидаемый результат
 

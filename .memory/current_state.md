@@ -1,6 +1,8 @@
 # Текущее состояние проекта
 
-Проект `admin_toolkit_v3` — набор Bash-скриптов для первичной настройки Linux-хостов.
+Проект `admin_toolkit` — набор Bash-скриптов для первичной настройки Linux-хостов.
+
+GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переименован из `pagrishaevich/admin_toolkit_v3` без потери истории).
 
 Основной оркестратор: `scripts/bootstrap.sh`.
 

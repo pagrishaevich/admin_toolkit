@@ -1,8 +1,8 @@
-# admin_toolkit_v2
+# admin_toolkit
 
 Набор скриптов для первичной настройки Linux-хостов: пакетная инициализация, репозитории, синхронизация времени, ввод в домен, CIFS-монтирования, отчётность, установка базового ПО и итоговая проверка состояния.
 
-![CI](https://github.com/pagrishaevich/admin_toolkit_v3/actions/workflows/shell-ci.yml/badge.svg)
+![CI](https://github.com/pagrishaevich/admin_toolkit/actions/workflows/shell-ci.yml/badge.svg)
 
 Подробный operational runbook и память последней RED OS сессии: `docs/REDOS_RUNBOOK_2026-04-20.md`
 

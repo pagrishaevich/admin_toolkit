@@ -1,6 +1,6 @@
 # RED OS Runbook (2026-04-20)
 
-Этот документ фиксирует полный контекст сессии по адаптации `admin_toolkit_v3` под RED OS и по итогам реального прогона на хостах. Нужен для продолжения работы с нулевого контекста.
+Этот документ фиксирует полный контекст сессии по адаптации `admin_toolkit` под RED OS и по итогам реального прогона на хостах. Нужен для продолжения работы с нулевого контекста.
 
 ## 1. Цель сессии
 
@@ -48,14 +48,14 @@ SELF_UPDATE_ENABLED="1"
 ### 3.1. Базовый запуск
 
 ```bash
-cd admin_toolkit_v3
+cd admin_toolkit
 bash scripts/bootstrap.sh
 ```
 
 ### 3.2. Продолжить с CIFS
 
 ```bash
-cd admin_toolkit_v3/scripts
+cd admin_toolkit/scripts
 ./bootstrap.sh --from-step cifs
 ```
 
@@ -297,7 +297,7 @@ VIPNET RPM FAIL
 ### 7.1. Прогон с CIFS и дальше
 
 ```bash
-cd admin_toolkit_v3/scripts
+cd admin_toolkit/scripts
 ./bootstrap.sh --from-step cifs
 ```
 
@@ -330,4 +330,3 @@ ps -ef | grep -E "bootstrap.sh|kesl-setup|timeout|setsid"
 - Решить, нужен ли merge ветки `vipnet-tty-eula` в `main`
 - При желании добавить ещё более подробный operational runbook для техников
 - При желании привести `README` к более краткой форме, а этот документ оставить как memory/runbook
-
