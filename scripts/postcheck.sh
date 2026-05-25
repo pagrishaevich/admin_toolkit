@@ -8,7 +8,10 @@ check_ok() {
   local label="$1"
   local cmd="$2"
 
-  if (set +o pipefail; eval "$cmd") >/dev/null 2>&1; then
+  if (
+    set +o pipefail
+    eval "$cmd"
+  ) >/dev/null 2>&1; then
     log "$label OK"
   else
     log "$label FAIL"
@@ -109,16 +112,16 @@ check_assistant() {
   while IFS= read -r line || [ -n "$line" ]; do
     line="${line%$'\r'}"
     case "$line" in
-      ""|\#*)
-        continue
-        ;;
+    "" | \#*)
+      continue
+      ;;
     esac
 
     if ! grep -Fqx "$line" /etc/hosts; then
       hosts_ok=0
       break
     fi
-  done < "$ASSISTANT_HOSTS_FILE"
+  done <"$ASSISTANT_HOSTS_FILE"
 
   if [ "$hosts_ok" -eq 1 ]; then
     log "ASSISTANT HOSTS OK"
@@ -152,10 +155,28 @@ check_r7office() {
   fi
 }
 
-realm list | grep -q "$DOMAIN" && log "DOMAIN OK" || { log "DOMAIN FAIL"; FAIL=1; }
-mount | grep -Fq "$CIFS_SERVER" && log "CIFS OK" || { log "CIFS FAIL"; FAIL=1; }
+if realm list | grep -q "$DOMAIN"; then
+  log "DOMAIN OK"
+else
+  log "DOMAIN FAIL"
+  FAIL=1
+fi
+
+if mount | grep -Fq "$CIFS_SERVER"; then
+  log "CIFS OK"
+else
+  log "CIFS FAIL"
+  FAIL=1
+fi
+
 check_ok "CIFS INV WRITE" "test_file=\"/mnt/inv/.bootstrap_write_test_\$\$\"; touch \"\$test_file\" && rm -f \"\$test_file\""
-systemctl is-active chronyd >/dev/null && log "TIME OK" || { log "TIME FAIL"; FAIL=1; }
+if systemctl is-active chronyd >/dev/null; then
+  log "TIME OK"
+else
+  log "TIME FAIL"
+  FAIL=1
+fi
+
 check_kaspersky
 check_cryptopro
 check_vipnet

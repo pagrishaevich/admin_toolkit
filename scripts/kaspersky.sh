@@ -106,19 +106,31 @@ install_kaspersky() {
   fi
 
   kesl_rpm="$(find_single_rpm "$KASPERSKY_SHARE_DIR" 'kesl-[0-9]*.rpm')"
-  [ -n "$kesl_rpm" ] || { log "[ERROR] kesl RPM not found in $KASPERSKY_SHARE_DIR"; exit 1; }
+  [ -n "$kesl_rpm" ] || {
+    log "[ERROR] kesl RPM not found in $KASPERSKY_SHARE_DIR"
+    exit 1
+  }
   log "[KASPERSKY] found KESL RPM: $kesl_rpm"
 
   if [ "$KASPERSKY_INSTALL_GUI" = "1" ]; then
     gui_rpm="$(find_single_rpm "$KASPERSKY_SHARE_DIR" 'kesl-gui-*.rpm')"
-    [ -n "$gui_rpm" ] || { log "[ERROR] kesl-gui RPM not found in $KASPERSKY_SHARE_DIR"; exit 1; }
+    [ -n "$gui_rpm" ] || {
+      log "[ERROR] kesl-gui RPM not found in $KASPERSKY_SHARE_DIR"
+      exit 1
+    }
     log "[KASPERSKY] found GUI RPM: $gui_rpm"
   fi
 
   if [ "$KASPERSKY_INSTALL_NETWORK_AGENT" = "1" ]; then
-    [ -n "$KASPERSKY_AGENT_SERVER" ] || { log "[ERROR] KASPERSKY_AGENT_SERVER is not set"; exit 1; }
+    [ -n "$KASPERSKY_AGENT_SERVER" ] || {
+      log "[ERROR] KASPERSKY_AGENT_SERVER is not set"
+      exit 1
+    }
     agent_rpm="$(find_single_rpm "$KASPERSKY_SHARE_DIR" 'klnagent64-*.rpm')"
-    [ -n "$agent_rpm" ] || { log "[ERROR] klnagent64 RPM not found in $KASPERSKY_SHARE_DIR"; exit 1; }
+    [ -n "$agent_rpm" ] || {
+      log "[ERROR] klnagent64 RPM not found in $KASPERSKY_SHARE_DIR"
+      exit 1
+    }
     log "[KASPERSKY] found Network Agent RPM: $agent_rpm"
   fi
 

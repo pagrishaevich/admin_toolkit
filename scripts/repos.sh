@@ -5,8 +5,8 @@ require_root
 
 REDOS_BASE_REPO_FILE="/etc/yum.repos.d/RedOS-Base.repo"
 REDOS_UPDATES_REPO_FILE="/etc/yum.repos.d/RedOS-Updates.repo"
-REDOS_BASE_URL='http://redrepos.yanao.int/redos/8.0c/$basearch/os'
-REDOS_UPDATES_URL='http://redrepos.yanao.int/redos/8.0c/$basearch/updates'
+REDOS_BASE_URL="http://redrepos.yanao.int/redos/8.0c/\$basearch/os"
+REDOS_UPDATES_URL="http://redrepos.yanao.int/redos/8.0c/\$basearch/updates"
 
 ensure_repo_baseurl() {
   local file="$1"
@@ -23,7 +23,7 @@ ensure_repo_baseurl() {
   mkdir -p "$(dirname "$file")"
 
   if [ ! -f "$file" ]; then
-    cat > "$file" <<EOF
+    cat >"$file" <<EOF
 [$section]
 name=$name
 baseurl=$url
@@ -89,8 +89,8 @@ EOF
         print "baseurl=" url
       }
     }
-  ' "$file" > "$tmp_file"
-  cat "$tmp_file" > "$file"
+  ' "$file" >"$tmp_file"
+  cat "$tmp_file" >"$file"
   rm -f "$tmp_file"
   log "[REPOS] updated $file"
 }

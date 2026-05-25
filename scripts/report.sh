@@ -47,11 +47,11 @@ if [ "$DRY_RUN" = "1" ]; then
   exit 0
 fi
 
-printf "hostname,fqdn,date,ip,mac,os_id,os_version,role,domain_status,cifs_status,timezone,serial\n" > "$REPORT"
+printf "hostname,fqdn,date,ip,mac,os_id,os_version,role,domain_status,cifs_status,timezone,serial\n" >"$REPORT"
 printf "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" \
-  "$HOST" "$FQDN" "$DATE" "$IP" "$MAC" "$OS_ID" "$OS_VERSION_ID" "$ROLE" "$DOMAIN_STATUS" "$CIFS_STATUS" "$TIMEZONE" "$SERIAL" >> "$REPORT"
+  "$HOST" "$FQDN" "$DATE" "$IP" "$MAC" "$OS_ID" "$OS_VERSION_ID" "$ROLE" "$DOMAIN_STATUS" "$CIFS_STATUS" "$TIMEZONE" "$SERIAL" >>"$REPORT"
 
-cat > "$REPORT_JSON" <<EOF
+cat >"$REPORT_JSON" <<EOF
 {
   "hostname": "$HOST",
   "fqdn": "$FQDN",

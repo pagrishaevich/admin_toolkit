@@ -28,9 +28,9 @@ configure_chrony() {
       awk '
         /^[[:space:]]*(server|pool|makestep)[[:space:]]+/ { next }
         { print }
-      ' "$CHRONY_CONFIG_FILE" > "${CHRONY_CONFIG_FILE}.tmp"
+      ' "$CHRONY_CONFIG_FILE" >"${CHRONY_CONFIG_FILE}.tmp"
     else
-      : > "${CHRONY_CONFIG_FILE}.tmp"
+      : >"${CHRONY_CONFIG_FILE}.tmp"
     fi
     {
       printf "server %s iburst\n" "$NTP_SERVER"
@@ -39,12 +39,12 @@ configure_chrony() {
       done
       printf "makestep 1.0 3\n"
       cat "${CHRONY_CONFIG_FILE}.tmp"
-    } > "${CHRONY_CONFIG_FILE}.new"
+    } >"${CHRONY_CONFIG_FILE}.new"
     mv "${CHRONY_CONFIG_FILE}.new" "$CHRONY_CONFIG_FILE"
     rm -f "${CHRONY_CONFIG_FILE}.tmp"
   else
     mkdir -p "$chrony_dir"
-    cat > "$chrony_dropin" <<EOF
+    cat >"$chrony_dropin" <<EOF
 server ${NTP_SERVER} iburst
 $(for server in $NTP_EXTRA_SERVERS; do printf "server %s\n" "$server"; done)
 makestep 1.0 3

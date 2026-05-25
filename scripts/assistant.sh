@@ -18,12 +18,12 @@ append_assistant_hosts() {
   while IFS= read -r line || [ -n "$line" ]; do
     line="${line%$'\r'}"
     case "$line" in
-      ""|\#*)
-        continue
-        ;;
+    "" | \#*)
+      continue
+      ;;
     esac
     append_if_missing "$line" /etc/hosts
-  done < "$ASSISTANT_HOSTS_FILE"
+  done <"$ASSISTANT_HOSTS_FILE"
 }
 
 install_assistant() {
@@ -43,8 +43,14 @@ install_assistant() {
   fi
 
   assistant_rpm="$(find_assistant_rpm)"
-  [ -n "$assistant_rpm" ] || { log "[ERROR] Assistant RPM not found in $ASSISTANT_DIST_DIR"; exit 1; }
-  [ -r "$ASSISTANT_HOSTS_FILE" ] || { log "[ERROR] Assistant hosts file not found: $ASSISTANT_HOSTS_FILE"; exit 1; }
+  [ -n "$assistant_rpm" ] || {
+    log "[ERROR] Assistant RPM not found in $ASSISTANT_DIST_DIR"
+    exit 1
+  }
+  [ -r "$ASSISTANT_HOSTS_FILE" ] || {
+    log "[ERROR] Assistant hosts file not found: $ASSISTANT_HOSTS_FILE"
+    exit 1
+  }
 
   log "[ASSISTANT] selected RPM: $assistant_rpm"
   log "[ASSISTANT] installing Assistant"

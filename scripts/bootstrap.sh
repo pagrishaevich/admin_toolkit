@@ -78,34 +78,46 @@ FROM_STEP=""
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --dry-run)
-      export DRY_RUN=1
-      ;;
-    --step)
-      shift
-      [ "$#" -gt 0 ] || { echo "missing value for --step" >&2; exit 1; }
-      step_exists "$1" || { echo "unknown step: $1" >&2; exit 1; }
-      SELECTED_STEPS+=("$1")
-      ;;
-    --from-step)
-      shift
-      [ "$#" -gt 0 ] || { echo "missing value for --from-step" >&2; exit 1; }
-      step_exists "$1" || { echo "unknown step: $1" >&2; exit 1; }
-      FROM_STEP="$1"
-      ;;
-    --list-steps)
-      printf '%s\n' "${STEPS[@]}"
-      exit 0
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "unknown option: $1" >&2
-      usage >&2
+  --dry-run)
+    export DRY_RUN=1
+    ;;
+  --step)
+    shift
+    [ "$#" -gt 0 ] || {
+      echo "missing value for --step" >&2
       exit 1
-      ;;
+    }
+    step_exists "$1" || {
+      echo "unknown step: $1" >&2
+      exit 1
+    }
+    SELECTED_STEPS+=("$1")
+    ;;
+  --from-step)
+    shift
+    [ "$#" -gt 0 ] || {
+      echo "missing value for --from-step" >&2
+      exit 1
+    }
+    step_exists "$1" || {
+      echo "unknown step: $1" >&2
+      exit 1
+    }
+    FROM_STEP="$1"
+    ;;
+  --list-steps)
+    printf '%s\n' "${STEPS[@]}"
+    exit 0
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "unknown option: $1" >&2
+    usage >&2
+    exit 1
+    ;;
   esac
   shift
 done
@@ -122,7 +134,10 @@ fi
 
 if command_exists flock; then
   exec 9>"$LOCK"
-  flock -n 9 || { log "[BOOTSTRAP] already running"; exit 1; }
+  flock -n 9 || {
+    log "[BOOTSTRAP] already running"
+    exit 1
+  }
 else
   log_warn "flock not found, lock disabled"
 fi
@@ -139,7 +154,10 @@ else
     [ -n "$step" ] && STEPS_TO_RUN+=("$step")
   done < <(collect_steps "$FROM_STEP")
 fi
-[ "${#STEPS_TO_RUN[@]}" -gt 0 ] || { log "[BOOTSTRAP] no steps selected"; exit 1; }
+[ "${#STEPS_TO_RUN[@]}" -gt 0 ] || {
+  log "[BOOTSTRAP] no steps selected"
+  exit 1
+}
 export BOOTSTRAP_SELECTED_STEPS="${STEPS_TO_RUN[*]}"
 
 [ "$DRY_RUN" = "1" ] && log "[BOOTSTRAP] dry-run enabled"

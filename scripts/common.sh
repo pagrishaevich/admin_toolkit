@@ -184,7 +184,7 @@ append_if_missing() {
   fi
 
   touch "$file"
-  grep -Fqx "$line" "$file" || printf '%s\n' "$line" >> "$file"
+  grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
 }
 
 replace_or_append_kv() {
@@ -202,7 +202,7 @@ replace_or_append_kv() {
   if grep -Eq "^${key}=" "$file"; then
     sed -i "s|^${key}=.*|${key}=${value}|" "$file"
   else
-    printf '%s=%s\n' "$key" "$value" >> "$file"
+    printf '%s=%s\n' "$key" "$value" >>"$file"
   fi
 }
 
@@ -221,7 +221,7 @@ replace_or_append_setting() {
   if grep -Eq "^[#[:space:]]*${key}[[:space:]]+" "$file"; then
     sed -i "s|^[#[:space:]]*${key}[[:space:]].*|${key} ${value}|" "$file"
   else
-    printf '%s %s\n' "$key" "$value" >> "$file"
+    printf '%s %s\n' "$key" "$value" >>"$file"
   fi
 }
 

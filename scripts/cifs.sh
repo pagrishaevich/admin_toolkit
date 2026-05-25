@@ -40,9 +40,9 @@ ensure_fstab_entry() {
     $0 ~ /^[[:space:]]*#/ { print; next }
     $2 == mount_point { next }
     { print }
-  ' /etc/fstab > "$tmp_file"
-  printf '%s %s cifs %s 0 0\n' "$remote_path" "$mount_point" "$options" >> "$tmp_file"
-  cat "$tmp_file" > /etc/fstab
+  ' /etc/fstab >"$tmp_file"
+  printf '%s %s cifs %s 0 0\n' "$remote_path" "$mount_point" "$options" >>"$tmp_file"
+  cat "$tmp_file" >/etc/fstab
   rm -f "$tmp_file"
 }
 
@@ -79,12 +79,12 @@ configure_cifs_mounts() {
     log "[DRY-RUN] write CIFS credentials file $CIFS_CREDENTIALS_FILE"
   else
     mkdir -p "$(dirname "$CIFS_CREDENTIALS_FILE")"
-    cat > "$CIFS_CREDENTIALS_FILE" <<EOF
+    cat >"$CIFS_CREDENTIALS_FILE" <<EOF
 username=${CIFS_USERNAME}
 EOF
-    printf 'password=%s\n' "$cifs_password" >> "$CIFS_CREDENTIALS_FILE"
+    printf 'password=%s\n' "$cifs_password" >>"$CIFS_CREDENTIALS_FILE"
     if [ -n "$CIFS_DOMAIN" ]; then
-      printf 'domain=%s\n' "$CIFS_DOMAIN" >> "$CIFS_CREDENTIALS_FILE"
+      printf 'domain=%s\n' "$CIFS_DOMAIN" >>"$CIFS_CREDENTIALS_FILE"
     fi
     chmod 600 "$CIFS_CREDENTIALS_FILE"
   fi

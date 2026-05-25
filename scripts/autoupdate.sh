@@ -13,9 +13,9 @@ configure_dnf_automatic() {
 
   backup_file "$DNF_AUTOMATIC_CONFIG"
   DNF_AUTOMATIC_CONFIG="$DNF_AUTOMATIC_CONFIG" \
-  DNF_AUTO_APPLY_UPDATES="$DNF_AUTO_APPLY_UPDATES" \
-  DNF_AUTO_DOWNLOAD_UPDATES="$DNF_AUTO_DOWNLOAD_UPDATES" \
-  python3 - <<'PY'
+    DNF_AUTO_APPLY_UPDATES="$DNF_AUTO_APPLY_UPDATES" \
+    DNF_AUTO_DOWNLOAD_UPDATES="$DNF_AUTO_DOWNLOAD_UPDATES" \
+    python3 - <<'PY'
 import configparser
 import os
 from pathlib import Path

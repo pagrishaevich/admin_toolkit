@@ -9,14 +9,14 @@ bash -n "$DIR"/*.sh
 
 if command -v shellcheck >/dev/null 2>&1; then
   echo "[validate] shellcheck"
-  shellcheck "$DIR"/*.sh
+  shellcheck -x -P "$DIR" "$DIR"/*.sh
 else
   echo "[validate] shellcheck not installed, skipping"
 fi
 
 if command -v shfmt >/dev/null 2>&1; then
   echo "[validate] shfmt"
-  shfmt -d "$DIR"/*.sh
+  shfmt -d -i 2 "$DIR"/*.sh
 else
   echo "[validate] shfmt not installed, skipping"
 fi

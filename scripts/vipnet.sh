@@ -54,12 +54,11 @@ install_vipnet() {
   fi
 
   case "$VIPNET_VARIANT" in
-    gui|cli)
-      ;;
-    *)
-      log "[ERROR] VIPNET_VARIANT must be gui or cli"
-      exit 1
-      ;;
+  gui | cli) ;;
+  *)
+    log "[ERROR] VIPNET_VARIANT must be gui or cli"
+    exit 1
+    ;;
   esac
 
   search_root="$VIPNET_DIST_DIR"

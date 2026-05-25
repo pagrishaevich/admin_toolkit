@@ -21,7 +21,7 @@ ensure_domain_hosts_entry() {
     return 0
   fi
 
-  printf '%s\n' "$entry" >> "$hosts_file"
+  printf '%s\n' "$entry" >>"$hosts_file"
   log "[DOMAIN] added hosts entry: $entry"
 }
 

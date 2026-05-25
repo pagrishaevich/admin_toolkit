@@ -122,7 +122,11 @@ install_cryptopro() {
     if [ -z "$rutoken_pkcs11_rpm" ] && [ -n "$extracted_root" ]; then
       rutoken_pkcs11_rpm="$(find_single_file "$extracted_root" 'librtpkcs11ecp-*.rpm')"
     fi
-    [ -n "$rutoken_pkcs11_rpm" ] || { log "[ERROR] Rutoken PKCS#11 RPM not found in $CRYPTO_PRO_DIST_DIR"; rm -rf "$extract_dir"; exit 1; }
+    [ -n "$rutoken_pkcs11_rpm" ] || {
+      log "[ERROR] Rutoken PKCS#11 RPM not found in $CRYPTO_PRO_DIST_DIR"
+      rm -rf "$extract_dir"
+      exit 1
+    }
     log "[CRYPTO_PRO] found Rutoken PKCS#11 RPM: $rutoken_pkcs11_rpm"
   fi
 
@@ -131,7 +135,11 @@ install_cryptopro() {
     if [ -z "$jacarta_rpm" ] && [ -n "$extracted_root" ]; then
       jacarta_rpm="$(find_single_file "$extracted_root" 'cprocsp-rdr-jacarta*.rpm')"
     fi
-    [ -n "$jacarta_rpm" ] || { log "[ERROR] JaCarta RPM not found in $CRYPTO_PRO_DIST_DIR"; rm -rf "$extract_dir"; exit 1; }
+    [ -n "$jacarta_rpm" ] || {
+      log "[ERROR] JaCarta RPM not found in $CRYPTO_PRO_DIST_DIR"
+      rm -rf "$extract_dir"
+      exit 1
+    }
     log "[CRYPTO_PRO] found JaCarta RPM: $jacarta_rpm"
   fi
 
@@ -168,7 +176,11 @@ install_cryptopro() {
       log "[DRY-RUN] activate CryptoPro license"
     else
       cpconfig_path="$(cpconfig_cmd || true)"
-      [ -n "$cpconfig_path" ] || { log "[ERROR] cpconfig not found after CryptoPro installation"; rm -rf "$extract_dir"; exit 1; }
+      [ -n "$cpconfig_path" ] || {
+        log "[ERROR] cpconfig not found after CryptoPro installation"
+        rm -rf "$extract_dir"
+        exit 1
+      }
       log "[CRYPTO_PRO] activating license"
       "$cpconfig_path" -license -set "$CRYPTO_PRO_LICENSE_KEY"
     fi
