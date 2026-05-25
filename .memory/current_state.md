@@ -10,17 +10,13 @@ GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переимено
 Текущий порядок bootstrap:
 
 1. `preflight`
-2. `repos`
-3. `packages`
-4. `time`
-5. `domain`
-6. `cifs`
-7. `report`
-8. `software`
-9. `security`
-10. `postcheck`
-
-Удалены из основного порядка запуска: `self-update`, `proxy`, `autoupdate`, `network`.
+2. `packages`
+3. `time`
+4. `domain`
+5. `cifs`
+6. `report`
+7. `software`
+8. `postcheck`
 
 Ключевые модули:
 
@@ -38,8 +34,7 @@ GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переимено
 
 Проверено:
 
-- `bash scripts/validate.sh` проходит.
-- `bash scripts/bootstrap.sh --dry-run` проходит до `[RESULT] SUCCESS`.
+- `bash scripts/validate.sh` проходит, включая `shellcheck` и `shfmt`.
 - Реальный `bash scripts/bootstrap.sh --step time` успешно настраивает chrony и оставляет `server time.yanao.ru iburst`, `server 10.82.200.1` и один `makestep 1.0 3`.
 - Kaspersky Endpoint Security и Network Agent на тестовом сервере уже установлены, активны и проходят `postcheck`.
 - `kesl-gui` на тестовом сервере отсутствует; `software --dry-run` с текущей версией находит `kesl-gui-12.2.0-2412.x86_64.rpm` и планирует его установку.
@@ -48,5 +43,4 @@ GitHub-репозиторий: `pagrishaevich/admin_toolkit` (переимено
 - Ассистент подключён после ViPNet в шаге `software`; `software --dry-run` на тестовом сервере находит `assistant-fstek-5.4-0.x86_64.rpm` и планирует добавить 7 узлов из `redos_hosts.txt` в `/etc/hosts`.
 - Проверка CI настроена на `shellcheck` с разрешением локальных `source` и `shfmt -i 2`; строгий прогон на тестовом сервере проходит.
 - DNS и поисковый домен не настраиваются bootstrap-скриптом; эти параметры задаются на этапе установки ОС.
-- Шаг `repos` гарантирует внутренние RED OS baseurl для `RedOS-Base.repo` и `RedOS-Updates.repo`.
 - Миграционные скрипты больше не входят в `admin_toolkit`; отдельный repo `D:\Codex\backup_restore` содержит backup сетевых папок, Яндекс Браузера без кэша, CUPS/SANE, сертификатов, КриптоПро/Rutoken/Jacarta, ViPNet и Ассистента; restore переносит данные локального пользователя в профиль доменного пользователя с gid по умолчанию `1965600513`.

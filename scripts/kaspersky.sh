@@ -12,7 +12,6 @@ source "$(dirname "$0")/common.sh"
 : "${KASPERSKY_USE_KSN:=yes}"
 : "${KASPERSKY_CONFIGURE_SELINUX:=yes}"
 : "${KASPERSKY_UPDATER_SOURCE:=KLServers}"
-: "${KASPERSKY_PROXY_SERVER:=}"
 : "${KASPERSKY_UPDATE_EXECUTE:=yes}"
 : "${KASPERSKY_LICENSE:=}"
 : "${KASPERSKY_AGENT_SERVER:=}"
@@ -58,9 +57,6 @@ EOF
     printf 'ADMIN_USER=%s\n' "$KASPERSKY_ADMIN_USER" >>"$outfile"
   fi
 
-  if [ -n "$KASPERSKY_PROXY_SERVER" ]; then
-    printf 'PROXY_SERVER=%s\n' "$KASPERSKY_PROXY_SERVER" >>"$outfile"
-  fi
 }
 
 write_klnagent_answers() {

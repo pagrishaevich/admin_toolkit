@@ -9,9 +9,6 @@
 ## Завершённые
 
 - Добавлен `install.md` с ручными командами настройки по шагам проекта.
-- Убран запуск шагов `self-update`, `proxy`, `autoupdate` из основного bootstrap-порядка.
-- Убрана проверка `dnf-automatic.timer` из `postcheck`.
-- Убрана установка `dnf-automatic` из базового шага `packages`.
 - Исправлена команда chmod в быстрых инструкциях.
 - На сервере `10.82.100.36` проверены `validate.sh`, полный `bootstrap.sh --dry-run` и реальный `bootstrap.sh --step time`.
 - Исправлена обработка FQDN hostname: для доменной валидации используется short hostname.
@@ -20,8 +17,6 @@
 - Включена установка `kesl-gui` по умолчанию через `KASPERSKY_INSTALL_GUI=1`.
 - Исправлены CIFS-права: `/mnt/inv` writable, `/mnt/distr` read-only.
 - Исправлено автопринятие лицензии ViPNet через непрерывную подачу `YES`.
-- Убран шаг `network` из bootstrap, чтобы скрипт не менял DNS и поисковый домен.
-- Шаг `repos` теперь добавляет `redrepos.yanao.int` в `RedOS-Base.repo` и `RedOS-Updates.repo`.
 - В шаг `software` добавлена автоустановка Ассистент с идемпотентным дополнением `/etc/hosts` из `redos_hosts.txt`.
 - GitHub-репозиторий переименован из `pagrishaevich/admin_toolkit_v3` в `pagrishaevich/admin_toolkit`.
 - Исправлена CI-проверка shell-скриптов: `shellcheck` видит подключаемые модули, а `shfmt` проверяет принятые отступы в два пробела.

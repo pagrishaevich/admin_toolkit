@@ -5,7 +5,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=/dev/null
 source "$DIR/common.sh"
 
-STEPS=(preflight repos packages time domain cifs report software security postcheck)
+STEPS=(preflight packages time domain cifs report software postcheck)
 
 usage() {
   cat <<'EOF'

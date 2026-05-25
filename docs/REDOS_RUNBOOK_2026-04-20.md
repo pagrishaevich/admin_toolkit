@@ -64,7 +64,6 @@ cd admin_toolkit/scripts
 - `cifs`
 - `report`
 - `software`
-- `security`
 - `postcheck`
 
 ### 3.3. Запустить только postcheck
@@ -258,7 +257,6 @@ VIPNET RPM FAIL
 - `DOMAIN OK`
 - `CIFS OK`
 - `TIME OK`
-- `AUTOUPDATE OK`
 - `KASPERSKY RPM OK`
 - `KASPERSKY SERVICE OK`
 - `KASPERSKY AGENT RPM OK`

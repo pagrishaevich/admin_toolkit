@@ -31,10 +31,10 @@ fi
 
 for step in "${SELECTED_STEPS[@]}"; do
   case "$step" in
-  packages | repos)
+  packages)
     require_command dnf
     ;;
-  time | security | postcheck)
+  time | postcheck)
     require_command systemctl
     ;;
   domain)

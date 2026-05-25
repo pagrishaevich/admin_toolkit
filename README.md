@@ -1,6 +1,6 @@
 # admin_toolkit
 
-Набор скриптов для первичной настройки Linux-хостов: пакетная инициализация, репозитории, синхронизация времени, ввод в домен, CIFS-монтирования, отчётность, установка базового ПО и итоговая проверка состояния.
+Набор скриптов для первичной настройки Linux-хостов: пакетная инициализация, синхронизация времени, ввод в домен, CIFS-монтирования, отчётность, установка базового ПО и итоговая проверка состояния.
 
 ![CI](https://github.com/pagrishaevich/admin_toolkit/actions/workflows/shell-ci.yml/badge.svg)
 
@@ -32,15 +32,13 @@ custom/
 `scripts/bootstrap.sh` запускает шаги в таком порядке:
 
 1. `preflight`
-2. `repos`
-3. `packages`
-4. `time`
-5. `domain`
-6. `cifs`
-7. `report`
-8. `software`
-9. `security`
-10. `postcheck`
+2. `packages`
+3. `time`
+4. `domain`
+5. `cifs`
+6. `report`
+7. `software`
+8. `postcheck`
 
 ## Быстрый старт
 
@@ -49,9 +47,7 @@ custom/
 2. При необходимости включите локальные расширения:
 
 ```bash
-cp custom/repos.local.sh.example custom/repos.local.sh
 cp custom/software.local.sh.example custom/software.local.sh
-cp custom/security.local.sh.example custom/security.local.sh
 ```
 
 3. Выдайте права на запуск shell-скриптам:
@@ -96,8 +92,6 @@ bash scripts/bootstrap.sh --list-steps
 - `REPORTS_DIR`, `CIFS_SERVER`, `CIFS_INV_REMOTE`, `CIFS_DISTR_REMOTE`, `CIFS_USERNAME`, `CIFS_PASSWORD_FILE`, `CIFS_INV_MOUNT_OPTIONS`, `CIFS_DISTR_MOUNT_OPTIONS`
 - `TOOLKIT_LOG_FILE`, `REPORT_ARCHIVE_DIR`
 - `SUPPORTED_DISTROS`
-- `FIREWALL_ENABLED`, `FIREWALL_SERVICES`, `FIREWALL_PORTS`
-- `SSHD_HARDENING_ENABLED`, `SSHD_PERMIT_ROOT_LOGIN`, `SSHD_PASSWORD_AUTH`
 - `KASPERSKY_*` для автоматической установки Kaspersky Endpoint Security из локальной папки/сетевой шары
 - `CRYPTO_PRO_*` для тихой установки КриптоПро CSP из папки с дистрибутивами
 - `VIPNET_*` для тихой установки ViPNet Client без импорта ключей
@@ -109,16 +103,9 @@ bash scripts/bootstrap.sh --list-steps
 
 Базовые скрипты остаются универсальными, а логика, завязанная на конкретную площадку, выносится в локальные hooks:
 
-- `custom/repos.local.sh`
 - `custom/software.local.sh`
-- `custom/security.local.sh`
 
 Эти файлы подключаются только если существуют, поэтому core-часть проекта можно переиспользовать в разных окружениях.
-
-Шаг `repos` дополнительно гарантирует, что в стандартных RED OS repo-файлах есть внутренние зеркала:
-
-- `/etc/yum.repos.d/RedOS-Base.repo`: `http://redrepos.yanao.int/redos/8.0c/$basearch/os`
-- `/etc/yum.repos.d/RedOS-Updates.repo`: `http://redrepos.yanao.int/redos/8.0c/$basearch/updates`
 
 ## Проверка
 
@@ -271,9 +258,7 @@ R7_GRAFIKA_ENABLED="0"
 
 Что уже улучшено:
 
-- шаги `self-update`, `proxy`, `autoupdate` и `network` исключены из основного bootstrap-порядка
 - DNS и поисковый домен не перезаписываются bootstrap-скриптом
-- `repos` добавляет внутренние RED OS зеркала в стандартные repo-файлы
 - `time` настраивает `time.yanao.ru` и `10.82.200.1`
 - `cifs` монтирует `/mnt/inv` с записью, а `/mnt/distr` только для чтения
 - Kaspersky GUI включён по умолчанию
@@ -286,12 +271,11 @@ R7_GRAFIKA_ENABLED="0"
 - добавлены `dry-run`, запуск отдельных шагов и `preflight`
 - шаги domain и CIFS сделаны более идемпотентными
 - расширен инвентаризационный отчёт в CSV и JSON
-- добавлен базовый hardening для SSH и firewalld
 - добавлены локальные hooks для кастомизации
 - добавлены локальная валидация и CI-проверка
 
 Что пока остаётся намеренно простым:
 
-- `software` и часть `security` оставлены как точки расширения
+- `software` оставлен как точка расширения
 - пока нет отдельной упаковки или инсталлятора
 - пока нет полноценного интеграционного тестового окружения

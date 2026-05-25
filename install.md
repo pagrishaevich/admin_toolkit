@@ -34,36 +34,15 @@ command -v dnf hostname awk grep tee systemctl getent realm mount date
 getent hosts yg.loc
 ```
 
-## 2. Репозитории
-
-Если нужны локальные репозитории площадки, настройте файлы в `/etc/yum.repos.d/`.
-
-Для RED OS добавить внутренние зеркала в стандартные repo-файлы.
-
-```bash
-cp -a /etc/yum.repos.d/RedOS-Base.repo /etc/yum.repos.d/RedOS-Base.repo.bak.$(date +%Y%m%d%H%M%S) 2>/dev/null || true
-cp -a /etc/yum.repos.d/RedOS-Updates.repo /etc/yum.repos.d/RedOS-Updates.repo.bak.$(date +%Y%m%d%H%M%S) 2>/dev/null || true
-
-grep -Fq 'http://redrepos.yanao.int/redos/8.0c/$basearch/os' /etc/yum.repos.d/RedOS-Base.repo || \
-  sed -i 's|^baseurl=|baseurl=http://redrepos.yanao.int/redos/8.0c/$basearch/os,|' /etc/yum.repos.d/RedOS-Base.repo
-
-grep -Fq 'http://redrepos.yanao.int/redos/8.0c/$basearch/updates' /etc/yum.repos.d/RedOS-Updates.repo || \
-  sed -i 's|^baseurl=|baseurl=http://redrepos.yanao.int/redos/8.0c/$basearch/updates,|' /etc/yum.repos.d/RedOS-Updates.repo
-
-dnf makecache
-```
-
-Если таких файлов нет, создайте их вручную с секциями `[base]` и `[updates]`.
-
-## 3. Базовые пакеты
+## 2. Базовые пакеты
 
 Установить системные пакеты:
 
 ```bash
-dnf install -y join-to-domain realmd sssd adcli oddjob oddjob-mkhomedir firewalld chrony cifs-utils unzip
+dnf install -y join-to-domain realmd sssd adcli oddjob oddjob-mkhomedir chrony cifs-utils unzip
 ```
 
-## 4. Синхронизация времени
+## 3. Синхронизация времени
 
 Настроить `chrony` на нужный NTP-сервер:
 
@@ -89,7 +68,7 @@ chronyc sources -v
 grep -E '^server (time\.yanao\.ru|10\.82\.200\.1)' /etc/chrony.conf
 ```
 
-## 5. Ввод в домен
+## 4. Ввод в домен
 
 Проверить DNS домена:
 
@@ -134,7 +113,7 @@ systemctl restart sssd
 realm list
 ```
 
-## 6. CIFS-монтирования
+## 5. CIFS-монтирования
 
 Создать каталоги:
 
@@ -175,7 +154,7 @@ touch /mnt/inv/write_test && rm -f /mnt/inv/write_test
 touch /mnt/distr/write_test 2>/dev/null && echo "ОШИБКА: /mnt/distr доступен на запись" || echo "/mnt/distr только для чтения"
 ```
 
-## 7. Инвентаризационный отчёт
+## 6. Инвентаризационный отчёт
 
 Собрать основные данные:
 
@@ -198,7 +177,7 @@ echo "$HOST,$FQDN,$DATE,$IP,$OS_ID,$OS_VERSION_ID,$SERIAL" >> "$REPORT"
 cp "$REPORT" /mnt/inv/AGPetrosyan/reports/ 2>/dev/null || true
 ```
 
-## 8. Kaspersky Endpoint Security
+## 7. Kaspersky Endpoint Security
 
 Проверить наличие RPM:
 
@@ -279,7 +258,7 @@ systemctl is-active klnagent64
 /opt/kaspersky/klnagent64/bin/klnagchk
 ```
 
-## 9. КриптоПро CSP
+## 8. КриптоПро CSP
 
 Проверить дистрибутив:
 
@@ -327,7 +306,7 @@ rpm -q cprocsp-stunnel-64
 /opt/cprocsp/sbin/amd64/cpconfig -license -view
 ```
 
-## 10. ViPNet Client
+## 9. ViPNet Client
 
 Проверить дистрибутив:
 
@@ -364,7 +343,7 @@ rpm -qa | grep -E '^vipnetclient'
 command -v vipnetclient
 ```
 
-## 11. Ассистент
+## 10. Ассистент
 
 Установить пакет:
 
@@ -389,7 +368,7 @@ rpm -q assistant-fstek
 grep -Fxf /mnt/distr/linux/bootstrap/assistant/redos_hosts.txt /etc/hosts
 ```
 
-## 12. Яндекс Браузер
+## 11. Яндекс Браузер
 
 Установить пакет репозитория и браузер:
 
@@ -404,7 +383,7 @@ dnf install -y yandex-browser-stable
 rpm -q yandex-browser-stable
 ```
 
-## 13. Р7-Офис
+## 12. Р7-Офис
 
 Установить пакет репозитория и офис:
 
@@ -426,26 +405,7 @@ dnf install -y R7Grafika
 rpm -q r7-office
 ```
 
-## 14. Безопасность
-
-Включить firewalld:
-
-```bash
-systemctl enable --now firewalld
-firewall-cmd --permanent --add-service=ssh
-firewall-cmd --reload
-```
-
-Настроить SSH:
-
-```bash
-cp -a /etc/ssh/sshd_config /etc/ssh/sshd_config.bak.$(date +%Y%m%d%H%M%S)
-grep -q '^PermitRootLogin' /etc/ssh/sshd_config && sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config || echo 'PermitRootLogin no' >> /etc/ssh/sshd_config
-grep -q '^PasswordAuthentication' /etc/ssh/sshd_config && sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config || echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
-systemctl reload sshd || systemctl reload ssh || true
-```
-
-## 15. Итоговая проверка
+## 13. Итоговая проверка
 
 Проверить домен, CIFS и время:
 

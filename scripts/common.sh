@@ -8,12 +8,9 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${DOMAIN_USER:=}"
 : "${DOMAIN_PASSWORD:=}"
 : "${DOMAIN_PASSWORD_FILE:=}"
-: "${DNS_SERVERS:=10.14.100.222 10.17.101.222}"
 : "${NTP_SERVER:=time.yanao.ru}"
 : "${NTP_EXTRA_SERVERS:=10.82.200.1}"
-: "${PROXY:=10.82.200.1:8090}"
 : "${ROLE:=workstation}"
-: "${ADMIN_USB_SERIAL:=CHANGE_ME}"
 : "${REPORTS_DIR:=/mnt/inv/AGPetrosyan/reports}"
 : "${CIFS_SERVER:=10.82.107.5}"
 : "${CIFS_INV_REMOTE:=//10.82.107.5/inv}"
@@ -30,22 +27,11 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${SELF_UPDATE_ENABLED:=0}"
 : "${AUTO_UPDATE_REMOTE:=origin}"
 : "${AUTO_UPDATE_BRANCH:=main}"
-: "${DNF_PROXY_CONFIG:=/etc/dnf/dnf.conf}"
 : "${CHRONY_CONFIG_FILE:=/etc/chrony.conf}"
-: "${DNF_AUTOMATIC_CONFIG:=/etc/dnf/automatic.conf}"
-: "${DNF_AUTO_APPLY_UPDATES:=yes}"
-: "${DNF_AUTO_DOWNLOAD_UPDATES:=yes}"
 : "${TOOLKIT_LOG_FILE:=/var/log/bootstrap.log}"
 : "${REPORT_ARCHIVE_DIR:=/var/log/bootstrap_reports}"
 : "${CUSTOM_DIR:=$PROJECT_ROOT/custom}"
 : "${SUPPORTED_DISTROS:=fedora rhel rocky almalinux centos redos}"
-: "${FIREWALL_ENABLED:=1}"
-: "${FIREWALL_SERVICES:=ssh}"
-: "${FIREWALL_PORTS:=}"
-: "${SSHD_HARDENING_ENABLED:=1}"
-: "${SSHD_PERMIT_ROOT_LOGIN:=no}"
-: "${SSHD_PASSWORD_AUTH:=yes}"
-: "${SSH_CONFIG_FILE:=/etc/ssh/sshd_config}"
 : "${KASPERSKY_ENABLED:=1}"
 : "${KASPERSKY_SHARE_DIR:=/mnt/distr/linux/bootstrap/kesl}"
 : "${KASPERSKY_INSTALL_GUI:=1}"
@@ -55,7 +41,6 @@ DRY_RUN="${DRY_RUN:-0}"
 : "${KASPERSKY_USE_KSN:=yes}"
 : "${KASPERSKY_CONFIGURE_SELINUX:=yes}"
 : "${KASPERSKY_UPDATER_SOURCE:=KLServers}"
-: "${KASPERSKY_PROXY_SERVER:=}"
 : "${KASPERSKY_UPDATE_EXECUTE:=yes}"
 : "${KASPERSKY_LICENSE:=}"
 : "${KASPERSKY_SETUP_TIMEOUT:=300}"
@@ -185,44 +170,6 @@ append_if_missing() {
 
   touch "$file"
   grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
-}
-
-replace_or_append_kv() {
-  local key="$1"
-  local value="$2"
-  local file="$3"
-
-  if [ "$DRY_RUN" = "1" ]; then
-    log "[DRY-RUN] set ${key} in $file to $value"
-    return 0
-  fi
-
-  touch "$file"
-
-  if grep -Eq "^${key}=" "$file"; then
-    sed -i "s|^${key}=.*|${key}=${value}|" "$file"
-  else
-    printf '%s=%s\n' "$key" "$value" >>"$file"
-  fi
-}
-
-replace_or_append_setting() {
-  local key="$1"
-  local value="$2"
-  local file="$3"
-
-  if [ "$DRY_RUN" = "1" ]; then
-    log "[DRY-RUN] set ${key} in $file to $value"
-    return 0
-  fi
-
-  touch "$file"
-
-  if grep -Eq "^[#[:space:]]*${key}[[:space:]]+" "$file"; then
-    sed -i "s|^[#[:space:]]*${key}[[:space:]].*|${key} ${value}|" "$file"
-  else
-    printf '%s %s\n' "$key" "$value" >>"$file"
-  fi
 }
 
 run_local_hook() {
